@@ -1,0 +1,166 @@
+body {
+	margin: 0px;
+	background-color: #ffffff;
+	font-size:1.2em;
+	height:100%;
+}
+
+.tbl { display: table; }
+.tblhead { display: table-row; font-weight: bold; cursor: pointer }
+.tblrowgroup { display: table-row-group; background-color: #bbd}
+.tblrow { display: table-row; }
+.tblcell { display: table-cell; padding-right: 5px; }
+
+.divButton {
+    display: inline-block;
+    padding: 5px;
+    border: 1px #070 solid;
+    color: #070;
+}
+.divButton:hover {
+    border: 1px #fff solid;
+    color: #fff;
+}
+    
+#leftSidetab {
+	width: 200px;
+	height: 100%;
+	position:absolute;
+	left: 0px;
+	overflow: auto;
+	display:none;
+	padding: 10px;
+	background-color: #e0e0e0;
+	z-index: 5;
+}
+    
+#rightSidetab {
+	width: 400px;
+	height: 100%;
+	position:absolute;
+	right: 0px;
+	overflow: auto;
+	display:none;
+	padding: 10px;
+	background-color: #ddf;
+	z-index: 5;
+}
+
+#nodeTreeView {
+	width: 100%;
+	height: 95%;
+	overflow: auto;
+	background-color: #ffd;
+}
+
+#mainNodeList i {
+    text-align: center;
+	width: 25px;
+}
+    
+#mainNodeList ul {
+	margin-left: 40px;
+}
+
+#mainNodeList li {
+	white-space: nowrap; <!--Prevent line break-->
+}
+
+#mainNodeList .maxmin {
+    font-size: 0.7em;
+	cursor: pointer;
+}
+
+#mainNodeList .itemDiv {
+    display: inline;
+	cursor: pointer;
+	overflow: hidden;
+	<!--box-sizing: border-box; --Include border and padding in width-->
+}
+
+._comment {
+	font-style: italic;
+	<!--font-family: "Courier New", Courier, monospace-->
+}
+
+#mainNodeList .itemDiv:hover {
+    color: #fff;
+    background-color: #0066aa;
+}
+
+#mainNodeList .itemDiv.selected {
+    border: 2px dashed #bbf;
+}
+    
+#editorWindow { 
+	position:fixed;
+	overflow: visible;
+	padding: 10px;
+	background-color: #ddf;
+	z-index: 5;
+}
+
+#editorWindow h2 { 
+	font-size: 1.5em;
+	cursor: move;
+	margin-bottom: 15px;
+}
+
+#editorWindow .tip {
+    text-align: right; 
+    font-size: 0.6em;
+}
+
+#ifr {
+	border-top: 5px solid #48f;
+	border-bottom: 5px solid #48f;
+}
+    
+#contextMenu {
+    margin: 0;
+    display: none;
+    position: absolute;
+    z-index: 10;
+    width: 240px;
+    background-color: #fff;
+    border: solid 1px #dfdfdf;
+    box-shadow: 1px 1px 2px #cfcfcf;
+}
+
+#contextMenu.active {
+    display: block;
+}
+
+.context-menu__items {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.context-menu__item {
+	display: block;
+	padding: 5px;
+	border-bottom: 1px blue solid;
+}
+
+.context-menu__item:last-child {
+	margin-bottom: 0;
+	border-bottom: none;
+}
+
+.context-menu__item:hover {
+    color: #fff;
+    background-color: #0066aa;
+}
+
+.context-menu__link {
+  display: block;
+  padding: 4px 12px;
+  color: #0066aa;
+  text-decoration: none;
+}
+
+.context-menu__link:hover {
+  color: #fff;
+  background-color: #0066aa;
+}
