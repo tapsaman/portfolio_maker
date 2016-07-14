@@ -3,6 +3,146 @@ Editor.selection = null;
 Editor.selectionOutline = "#55f dashed 2px";
 Editor.outlineSaveForSelection = "";
 Editor.pasteElementStrorage = null;
+Editor.undoStorage = [];
+Editor.undoStoragePlace = 0;
+Editor.targetDoc = null;
+
+
+Editor.UPD = {
+	
+	//allChanged = true,
+    targetSiteChanged: true,
+	selectionChanged: true,
+	undoStorageChanged: true,
+	nodeTreeChanged: true,
+	
+	check: function ()
+	{	
+		requestAnimationFrame(Editor.UPD.check);
+		
+        if (Editor.UPD.targetSiteChanged)
+		{
+            Editor.targetDoc = document.getElementById("ifr").contentWindow.document;
+            
+            Editor.UPD.targetSiteChanged = false;
+        }
+        
+		if (Editor.UPD.selectionChanged)
+		{
+			EditorWindow.update();
+			
+			Editor.UPD.selectionChanged = false;
+		}
+		
+		if (Editor.UPD.undoStorageChanged)
+		{
+			var undoBtn = document.getElementById("undoBtn"),
+				redoBtn = document.getElementById("redoBtn");
+			
+			if (Editor.undoStoragePlace === Editor.undoStorage.length)
+				undoBtn.disabled = true;
+			else
+				undoBtn.disabled = false;
+			
+			if (Editor.undoStoragePlace === 0)
+				redoBtn.disabled = true;
+			else
+				redoBtn.disabled = false;
+			
+			Editor.UPD.undoStorageChanged = false;
+		}
+        
+        if (Editor.UPD.nodeTreeChanged)
+		{
+            
+            
+            Editor.UPD.nodeTreeChanged = false;
+        }
+	}
+}
+
+// Save current target HTML and a description of the change
+Editor.saveForUndo = function(changeDescription)
+{
+	// Add current target site HTML to undoStorage
+	var new_place = (Editor.undoStoragePlace === 0 ? 1 : Editor.undoStoragePlace);
+	
+	Editor.undoStorage[new_place] =
+	{
+		descr: changeDescription,
+		html: $('#ifr').contents().find('html').html()
+	};
+	
+	alert( Editor.undoStorage[ new_place ].html );
+	
+	// Remove redos
+	if (Editor.undoStoragePlace !== 0)
+	{
+		Editor.saveForUndo.splice(0,Editor.undoStoragePlace);
+		Editor.undoStoragePlace = 0;
+	}
+	
+	// Keep undoStorage at a maximum of 10 saves
+	if (Editor.saveForUndo.length > 10)
+		Editor.saveForUndo.splice(10,Editor.saveForUndo.length-10);
+	
+	Editor.UPD.undoStorageChanged = true;
+}
+
+Editor.undo = function () 
+{
+	if (Editor.undoStoragePlace === Editor.undoStorage.length)
+	{
+		alert('can\'t undo');
+		return;
+	}
+		
+	if (Editor.undoStoragePlace === 0)
+	{
+		Editor.undoStorage[0] =
+		{
+			descr: 'to origin',
+			html: $('#ifr').contents().find('html').html()
+		};
+	}
+	
+	Editor.undoStoragePlace++;
+	
+	alert( Editor.undoStorage[ Editor.undoStoragePlace ].html );
+	
+	// Update HTML
+	$('#ifr').contents().find('html')[0].innerHTML = Editor.undoStorage[ Editor.undoStoragePlace ].html;
+		
+	Editor.UPD.undoStorageChanged = true;
+	Editor.UPD.nodeTreeChanged = true;
+}
+
+Editor.redo = function () 
+{
+	if (Editor.undoStoragePlace === 0)
+	{
+		alert('can\'t redo');
+		return;
+	}
+	
+	if (Editor.undoStoragePlace === Editor.undoStorage.length)
+	{
+		Editor.undoStorage[Editor.undoStoragePlace] =
+		{
+			descr: 'to last',
+			html: $('#ifr').contents().find('html').html()
+		};
+	}
+	
+	Editor.undoStoragePlace--;
+	
+	// Update HTML
+	$('#ifr').contents().find('html').html(
+		Editor.undoStorage[ Editor.undoStoragePlace ].html );
+		
+	Editor.UPD.undoStorageChanged = true;
+	Editor.UPD.nodeTreeChanged = true;
+}
 
 Editor.update = function()
 {
@@ -78,31 +218,13 @@ Editor.footerAreaOnOff = function(event)
     }
 }
 
-Editor.headerAreaOnOff = function(event)
+Editor.removeSelectionFrom = function (elem)
 {
-    var ha = document.getElementById('ifr').contentWindow.document.getElementById('headerArea');
-    
-    // HEADER on
-    if (event.target.checked)
-    {
-        if (!ha) {
-            // No headerArea found, create new
-            $(document.getElementById('ifr').contentWindow.document.body)
-                .prepend('<div id="headerArea" data-bfol_type="headerArea">\
-                                <div id="headerContent" class="bfol_unselectable">\
-                                    <h1 style="float:left">Pertti</h1>\
-                                    <h3 style="float:right">Olen tietokoneäijä</h3>\
-                                </div>\
-                          </div>');
-        }
-        else if (!$(ha).is(":visible"))
-            $(ha).show();
-    }
-    // HEADER off
-    else 
-    {
-        if (ha) $(ha).hide();
-    }
+	$(elem)
+		.css('outline',elem.getAttribute('data-bfol_outlinesave'))
+		.removeClass("editorselection")
+		.removeAttr('data-bfol_outlinesave');
+	//elem.removeAttribute("data-bfol_outlinesave")
 }
 
 Editor.setSelection = function(elem)
@@ -112,29 +234,39 @@ Editor.setSelection = function(elem)
 	// For previous selection: restore outline and remove class
 	//$("#ifr").contents().find(".editorselection")
     
-	$(Editor.selection)
-        .css("outline",Editor.outlineSaveForSelection)
-        .removeClass("editorselection");
-		
+	$(Editor.selection).each(function () 
+	{
+		Editor.removeSelectionFrom(this);
+	});
+        	
 	$("#mainNodeList .itemDiv.selected")
 		.removeClass("selected");
 	
-	if (!elem.tagName) {
+	if (!elem || !elem.tagName) {
 		// elem is not a DOMElement
 		Editor.selection = null;
-		EditorWindow.update();
+		
+		Editor.UPD.selectionChanged = true;
+		
 		return false;
 	}
 	else {
         //alert("elem===HTMLElement");
 		Editor.selection = elem;
-		Editor.outlineSaveForSelection = elem.style.outline;
+		elem.setAttribute('data-bfol_outlinesave',elem.style.outline)
 		elem.style.outline = Editor.selectionOutline;
 		elem.className += " editorselection";
 		
-		EditorWindow.update();
+		Editor.UPD.selectionChanged = true;
+		
 		return true;
 	}
+}
+
+Editor.addSelection = function(elem)
+{
+	
+	
 }
 
 Editor.getElementTitle = function(elem) {
@@ -145,7 +277,7 @@ Editor.getElementTitle = function(elem) {
         title = '"' + elem.id + '" ';
 	else 
 	{
-        var elemData = ElemLib.get(elem);
+        var elemData = ElemLib.getData(elem);
         
         title = '&lt;' + elemData.name + '&gt;';
     }

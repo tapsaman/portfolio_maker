@@ -35,12 +35,6 @@ General:
         visibility: {
             defValue: 'visible',
             opt: ['visible','hidden','collapse','inherit']
-        },
-        color: { 
-            defValue: 'inherit' 
-        },
-        backgroundColor: { 
-            defValue: 'inherit' 
         }
     },
 Position: {
@@ -61,7 +55,74 @@ Position: {
         defValue: 'auto' 
     }
 },
+
+Style: {
+
+    color: { 
+        defValue: 'inherit'
+    },
+    backgroundColor: { 
+        defValue: 'inherit'
+    },
+    
+    marginTop: {
+        defValue: 0
+    },
+    marginRight: {
+        defValue: 0
+    },
+    marginBottom: {
+        defValue: 0
+    },
+    marginLeft: {
+        defValue: 0
+    },
+    paddingTop: {
+        defValue: 0
+    },
+    paddingRight: {
+        defValue: 0
+    },
+    paddingBottom: {
+        defValue: 0
+    },
+    paddingLeft: {
+        defValue: 0
+    }
+    
+},
+    
 Text: {
+    
+    fontSize: {
+        defValue: 'medium'
+    },
+    
+    fontFamily: {
+        defValue: '"Times New Roman", Georgia, Serif',
+        opt: [],
+        fallbacks: []
+    },
+    
+    textAlign: {
+        defValue: 'left',
+        opt: ['left','right','center','justify','inherit']
+    },
+    
+    lineHeight: {
+        defValue: 'normal'
+    },
+    
+    fontWeight: {
+        defValue: 'normal',
+        opt: ['normal','bold','bolder','lighter','inherit']
+    },
+    
+    fontStyle: {
+        defValue: 'normal',
+        opt: ['normal','italic','oblique','inherit']
+    },
+    
     textContent: {
         nickName: 'text',
         defValue: '',

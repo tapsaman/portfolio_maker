@@ -21,7 +21,17 @@ body {
     border: 1px #fff solid;
     color: #fff;
 }
-    
+
+#uploadWindow {
+    position: fixed;
+    margin: auto;
+    overflow: auto;
+	display: none;
+    padding: 10px;
+	background-color: #9d9;
+	z-index: 10;
+}
+
 #leftSidetab {
 	width: 200px;
 	height: 100%;
@@ -44,6 +54,30 @@ body {
 	padding: 10px;
 	background-color: #ddf;
 	z-index: 5;
+}
+    
+#editorWindow { 
+	position:fixed;
+	overflow: visible;
+	padding: 10px;
+	background-color: #ddf;
+	z-index: 5;
+}
+
+#editorWindow h2 { 
+	font-size: 1.5em;
+	cursor: move;
+	margin-bottom: 15px;
+}
+
+#editorWindow .tip {
+    text-align: right; 
+    font-size: 0.6em;
+}
+
+#ifr {
+	border-top: 5px solid #48f;
+	border-bottom: 5px solid #48f;
 }
 
 #nodeTreeView {
@@ -91,31 +125,7 @@ body {
 #mainNodeList .itemDiv.selected {
     border: 2px dashed #bbf;
 }
-    
-#editorWindow { 
-	position:fixed;
-	overflow: visible;
-	padding: 10px;
-	background-color: #ddf;
-	z-index: 5;
-}
 
-#editorWindow h2 { 
-	font-size: 1.5em;
-	cursor: move;
-	margin-bottom: 15px;
-}
-
-#editorWindow .tip {
-    text-align: right; 
-    font-size: 0.6em;
-}
-
-#ifr {
-	border-top: 5px solid #48f;
-	border-bottom: 5px solid #48f;
-}
-    
 #contextMenu {
     margin: 0;
     display: none;

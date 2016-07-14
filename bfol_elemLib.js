@@ -57,7 +57,7 @@ ElemLib = {
 	p: 
         new ElemLibItem({tag: 'p', name: 'paragraph', faClass: 'fa-paragraph', faUnicode: '\f1dd', init: function(elem) { elem.textContent = "This is a paragraph"; } }),
 	div: 
-        new ElemLibItem({tag: 'div', name: 'container', faClass: 'fa-square-o', faUnicode: '\f096', noPropGroups: ['Text'],
+        new ElemLibItem({tag: 'div', name: 'container', faClass: 'fa-square-o', faUnicode: '\f096', isContainer: true, noPropGroups: ['Text'],
                         init: function(elem) { elem.style.height = "50px"; elem.style.backgroundColor = "#070"; }}),
 	canvas: 
         new ElemLibItem({tag: 'canvas', faClass: 'fa-pencil-square-o', faUnicode: '\f044', noPropGroups: ['Text']}),
@@ -127,7 +127,7 @@ ElemLib = {
         new ElemLibItem({tag: 'div', name: 'gridColumn', faClass: 'fa-th-large', faUnicode: '\f009', noPropGroups: ['Text']}),
 		
 	// Fetch data for HTML element (and define elemType if needed)
-	get: function(elem)
+	getData: function(elem)
     {	
         // Try by a previously defined elemType-data attribute
         var prev_type = elem.getAttribute('data-pf_elemtype');

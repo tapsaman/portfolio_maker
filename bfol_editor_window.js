@@ -15,7 +15,7 @@ EditorWindow.update = function()
     }
     
 	var e = Editor.selection,
-		eData = ElemLib.get(e),
+		eData = ElemLib.getData(e),
         eHead = document.getElementById("edwiHead"),
         eInfo = document.getElementById("edwiInfo");
     
