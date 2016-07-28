@@ -1,65 +1,19 @@
-var Editor = {};
-Editor.selection = null;
-Editor.selectionOutline = "#55f dashed 2px";
-Editor.outlineSaveForSelection = "";
-Editor.pasteElementStrorage = null;
-Editor.undoStorage = [];
-Editor.undoStoragePlace = 0;
-Editor.targetDoc = null;
-
-
-Editor.UPD = {
+var Editor = {
 	
-	//allChanged = true,
-    targetSiteChanged: true,
-	selectionChanged: true,
-	undoStorageChanged: true,
-	nodeTreeChanged: true,
+	// Selected element in editing document (Target.doc)
+	selection: null,
 	
-	check: function ()
-	{	
-		requestAnimationFrame(Editor.UPD.check);
-		
-        if (Editor.UPD.targetSiteChanged)
-		{
-            Editor.targetDoc = document.getElementById("ifr").contentWindow.document;
-            
-            Editor.UPD.targetSiteChanged = false;
-        }
-        
-		if (Editor.UPD.selectionChanged)
-		{
-			EditorWindow.update();
-			
-			Editor.UPD.selectionChanged = false;
-		}
-		
-		if (Editor.UPD.undoStorageChanged)
-		{
-			var undoBtn = document.getElementById("undoBtn"),
-				redoBtn = document.getElementById("redoBtn");
-			
-			if (Editor.undoStoragePlace === Editor.undoStorage.length)
-				undoBtn.disabled = true;
-			else
-				undoBtn.disabled = false;
-			
-			if (Editor.undoStoragePlace === 0)
-				redoBtn.disabled = true;
-			else
-				redoBtn.disabled = false;
-			
-			Editor.UPD.undoStorageChanged = false;
-		}
-        
-        if (Editor.UPD.nodeTreeChanged)
-		{
-            
-            
-            Editor.UPD.nodeTreeChanged = false;
-        }
-	}
-}
+	lastSelectio: null,
+	// Holder for data of this selection
+	selectionData: null,
+	// Selection indicator
+	selectionOutline: "#55f dashed 2px",
+	// Holder for cut/copied element(s)
+	pasteElementStrorage: null,
+	
+	undoStorage: [],
+	undoStoragePlace: 0
+};
 
 // Save current target HTML and a description of the change
 Editor.saveForUndo = function(changeDescription)
@@ -221,9 +175,9 @@ Editor.footerAreaOnOff = function(event)
 Editor.removeSelectionFrom = function (elem)
 {
 	$(elem)
-		.css('outline',elem.getAttribute('data-bfol_outlinesave'))
-		.removeClass("editorselection")
-		.removeAttr('data-bfol_outlinesave');
+		.css('outline',elem.getAttribute('data-outlinesave'))
+		.removeClass('editorselection')
+		.removeAttr('data-outlinesave');
 	//elem.removeAttribute("data-bfol_outlinesave")
 }
 
@@ -245,19 +199,20 @@ Editor.setSelection = function(elem)
 	if (!elem || !elem.tagName) {
 		// elem is not a DOMElement
 		Editor.selection = null;
+		Editor.selectionData = null;
 		
-		Editor.UPD.selectionChanged = true;
+		Updates.selectionChanged = true;
 		
 		return false;
 	}
 	else {
-        //alert("elem===HTMLElement");
 		Editor.selection = elem;
-		elem.setAttribute('data-bfol_outlinesave',elem.style.outline)
+		Editor.selectionData = ElemLib.getData(elem);
+		elem.setAttribute('data-outlinesave',elem.style.outline)
 		elem.style.outline = Editor.selectionOutline;
 		elem.className += " editorselection";
 		
-		Editor.UPD.selectionChanged = true;
+		Updates.selectionChanged = true;
 		
 		return true;
 	}

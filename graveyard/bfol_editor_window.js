@@ -212,7 +212,6 @@ EditorWindow.setHandlers = function()
             alert('no element selected...');
         }
         
-		//alert(this);
         var group = $(this).attr('data-groupName'),
             prop = $(this).attr('name'),
             elem = EditorWindow.selection;

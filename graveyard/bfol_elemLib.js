@@ -35,7 +35,7 @@ ElemLibItem = function( def ) // def holds definitions for a new element
                 this.init(elem);
             
 			target.appendChild( elem );
-			return true;
+			return elem;
 		}
 		else {
 			alert("problem adding "+this+" to "+target);

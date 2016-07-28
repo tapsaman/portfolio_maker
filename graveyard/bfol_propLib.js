@@ -100,8 +100,8 @@ Text: {
     
     fontFamily: {
         defValue: '"Times New Roman", Georgia, Serif',
-        opt: [],
-        fallbacks: []
+        opt: ['"Times New Roman"'],
+        fallbacks: ['Serif']
     },
     
     textAlign: {
