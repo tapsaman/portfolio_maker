@@ -1,1 +1,1 @@
-All javascript files will (eventually) come here
+For third party JavaScript
