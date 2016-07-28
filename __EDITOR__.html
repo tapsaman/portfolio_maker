@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+
+<html lang="en"> 
+<head>
+<title>portfolio editor</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link href="reset.css" rel="stylesheet" type="text/css">
+<link href="font-awesome-4.5.0/css/font-awesome.css" rel="stylesheet" type="text/css">
+    
+<script src="js_editor/editor.js"></script>
+<script src="js_editor/elem_lib.js"></script>
+<script src="js_editor/prop_lib.js"></script>
+<script src="js_editor/target.js"></script>
+<script src="js_editor/node_tree.js"></script>
+<script src="js_editor/style_editor.js"></script>
+<script src="js_editor/quick_editor.js"></script>
+<script src="js_editor/undo_redo.js"></script>
+<script src="js_editor/updates.js"></script>
+	
+<style>
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing:border-box;
+}
+    
+*:focus {
+    outline: 5px purple solid;
+}
+    
+html, body, table {
+    height: 100%;
+    width: 100%;
+}
+ 
+h1 { 
+	font-size: 3em;
+} 
+h2 { 
+	font-size: 2.5em;
+} 
+h3 { 
+	font-size: 2em;
+}
+h4 { 
+	font-size: 1.3em;
+    padding-top: 0.3em;
+    padding-bottom: 0.2em;
+} 
+
+i.fa {
+    padding-right: 0.3em;
+}
+    
+.disabled {
+    pointer-events: none;
+    color: #bbb !important;
+}
+    
+.editor-button {
+    display: inline-block;
+    padding: 5px;
+    border-radius: 10px;
+    color: #000;
+    border: 0px #888 solid;
+    margin: 0 1px;
+    cursor: pointer;
+}
+.editor-button:hover {
+    color: dodgerblue;
+    border-width: 0 1px;
+    margin: 0;
+}
+	
+#upper_panel {
+    position: fixed;
+    width: 100%;
+    height: 75px;
+    background-color: white;
+	border-bottom: 5px solid dodgerblue;
+}
+#upper_panel_buttons {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}
+
+#lower_wrapper {
+    /*background-color: purple;*/
+    position: absolute;
+    top: 75px;
+    left: 0px;
+    right 0px;
+    bottom: 0px;
+    width: 100%;
+}
+    
+#target_iframe {
+    display: block;
+    border: none;
+    width: 100%;
+    height: 100%;
+    /*padding-top: 75px; /* upper_panel height */
+    box-sizing:border-box;
+}
+
+#quick_editor {
+    display: none;
+    position: fixed;
+	background-color: aliceblue; /* editor bg-color */
+	padding: 10px;
+    border-radius: 15px;
+    z-index: 1;
+}
+    
+#quick_editor .editor-button {
+	display: block;
+    text-align: center;
+}
+    
+#quick_editor i {
+	padding: 0;
+}
+    
+.toggle_area {
+	position: fixed;
+	top: 75px; /* upper_panel height */
+	margin: 5px 10px 0 10px;
+    text-align: center;
+    
+    width: 50px;
+    height: 50px;
+    font-size: 40px;
+	pointer-events: none;
+	background-color: transparent;
+	color: dodgerblue; /* editor foreg-color */
+}
+/*
+.toggle_area:hover {
+	background-color: dodgerblue;
+	color: #000; /* Fallback for older browsers 
+    color: rgba(0, 0, 0, 0.5);
+}*/
+    
+.toggle {
+    cursor: pointer;
+    pointer-events: auto;
+}
+    
+.toggle:hover {
+    color: red;
+}
+
+/***** LEFT PANEL *****/
+#left_panel {
+    position: fixed;
+    width: 200px;
+	left: -200px;
+    top: 75px; /* upper_panel height */
+	pointer-events: none;
+}   
+#left_panel_selections {
+    width: 100%;
+}
+#left_panel_selections > li {
+    width: 195px;
+    padding: 10px;
+    margin: 5px 0px 10px auto;
+    border-radius: 15px;
+    background-color: aliceblue; /* editor bg-color */
+	pointer-events: auto;
+    cursor: pointer;
+}
+#left_panel_selections > li:hover {
+    color: white;
+    background-color: red;
+}
+#left_panel_selections > li > i {
+    color: dodgerblue;
+}
+#left_panel_toggle_area {
+	left: 0;	
+}
+
+.window {
+	position: fixed;
+    top: 75px; /* upper_panel height */
+	margin: 5px 0 50px 5px;
+	padding: 10px;
+	background-color: aliceblue; /* editor bg-color */
+	border-radius: 15px;
+	display: none;
+    overflow: auto;
+    max-width: 50%;
+    max-height: 90%;
+}
+
+#add li {
+    padding: 0.15em;
+}
+    
+#style_example {
+    background-color: beige;
+    max-width: 30em;
+}
+    
+#htmlText {
+    background-color: beige;
+    height: 100%;
+}
+
+/***** RIGHT PANEL *****/
+#right_panel {
+    position: fixed;
+    width: 250px;
+	right: -250px;
+    top: 75px; /* upper_panel height */
+}
+
+#right_panel_toggle_area {
+	right: 0px;
+}
+    
+#right_panel_tabs {
+    width: 250px;
+    height: 100%;
+	margin-top: 5px;
+    background-color: aliceblue; /* editor bg-color */
+}
+
+#node_tree {
+	font-size: 2em !important;
+}
+#node_tree i {
+	width: 1.5em;
+    padding: 0;
+	text-align: center;
+	color: dodgerblue;
+}
+
+/***********************/
+
+    
+</style>
+
+<script src="jquery.min.js"></script>
+<script src="jquery-ui.min.js"></script>
+<link rel="stylesheet" href="jquery-ui.css" type="text/css">
+    
+<script src="EasyTree/jquery.easytree.min.js"></script>
+<link  href="EasyTree/skin-lion/ui.easytree.css" rel="stylesheet" type="text/css">
+
+<script>
+
+function toggle_left_panel(conditional) 
+{
+	console.log("left panel toggled: " + conditional);
+    var panel_width = parseFloat($('#left_panel').css('width'));
+
+    if ( $('#left_panel_toggle').hasClass('toggle_closed') && 
+        (conditional === undefined || conditional === true) )
+    {
+        // Open left panel 
+        $('#left_panel_toggle')
+            .removeClass('toggle_closed')
+            .addClass('toggle_open')
+            .removeClass('fa-chevron-left')
+            .addClass('fa-chevron-right')
+			.parent().animate({left: panel_width-15}, 500);
+
+        $('#left_panel')
+            .show()
+            .animate({left: "0px"}, 500);
+        
+        // Close right
+        toggle_right_panel(false);
+    }
+    else if (conditional === undefined || conditional === false)
+    {
+        // Close left panel
+        $('#left_panel_toggle')
+            .removeClass('toggle_open')
+            .addClass('toggle_closed')
+            .removeClass('fa-chevron-right')
+            .addClass('fa-chevron-left')
+			.off('click')
+			.click(function() { toggle_left_panel(); })
+			.parent().animate({left: "0px"}, 500);
+        
+        $('.window').fadeOut();
+
+        $('#left_panel')
+            .animate({left: "-" + panel_width}, 500);
+    }
+}
+    
+function toggle_right_panel(conditional) 
+{
+	var panel_width = parseFloat($('#right_panel').css('width'));
+	
+    if ( $('#right_panel_toggle').hasClass('toggle_closed') && 
+        (conditional === undefined || conditional === true) )
+    {
+        // Open right panel
+        $('#right_panel_toggle')
+            .removeClass('toggle_closed')
+            .addClass('toggle_open')
+            .removeClass('fa-chevron-right')
+            .addClass('fa-chevron-left')
+			.parent().animate({right: panel_width-15}, 500);
+
+        $('#right_panel')
+            .animate({right: "0px"}, 500);
+        
+        // Close left
+        toggle_left_panel(false);
+    }
+    else if (conditional === undefined || conditional === false)
+    {
+        // Close right panel
+        $('#right_panel_toggle')
+            .removeClass('toggle_open')
+            .addClass('toggle_closed')
+            .removeClass('fa-chevron-left')
+            .addClass('fa-chevron-right')
+			.parent().animate({right: "0px"}, 500);
+
+        $('#right_panel')
+            .animate({right: "-" + panel_width}, 500);
+    }
+}
+
+function toggle_window(id)
+{	
+	if (id && typeof id === "string") {
+		// Show window with the defined id
+		var $window = $('#'+id);
+
+		$window.fadeIn();
+		
+		$('#left_panel').fadeOut();
+			
+		// DO EXTRA
+		if (id === "html") {
+			var txt = $('#target_iframe').contents().find('html').html();
+			$('#htmlText').html( '<xmp>' + txt + '</xmp>' );
+		}
+        else if (id === 'edit_styles') {
+            StyleEditor.build();
+        }
+        
+        var window_width = parseFloat( $window.css('width') );
+        
+        $('#left_panel_toggle')
+			.off('click')
+			.click(toggle_window)
+			.parent().animate({left: window_width-15}, 500); 
+    }
+	else {
+		// Hide all windows
+		$('.window').fadeOut();
+			
+		$('#left_panel').fadeIn();
+		
+		var panel_width = parseFloat( $('#left_panel').css('width') );
+		
+        $('#left_panel_toggle')
+			.off('click')
+			.click(function() { toggle_left_panel(); })
+			.parent().animate({left: panel_width-15}, 500);
+	}
+}
+
+$(function()
+{
+    $( "#right_panel_tabs" ).tabs();
+    
+	// Populate "Add element" list
+	for (var i in ElemLib.categ) {
+		var $categ = $('<li></li>'),
+			$cList = $('<ul></ul>');
+		for (var ii = 0; ii < ElemLib.categ[i].length; ii++) 
+		{
+			var elemData = ElemLib.categ[i][ii];
+			
+			$cList.append(
+				$('<li class="add_item">' + elemData.faHTML + elemData.name + '</li>').data('element',elemData)
+			);
+		}
+		$('#add_list').append($categ.append('<h4>'+i+'</h4>', $cList));
+	}
+	
+    // Set handlers
+    $('#left_panel_toggle')
+        .click(function() { toggle_left_panel(); });
+    
+    $('#right_panel_toggle')
+        .click(function() { toggle_right_panel(); });
+	
+	$('.add_item')
+		.dblclick(function(e) {
+			//var new_elem = $(this).data('element').addTo( Target.doc.body );
+			
+            var target; 
+            
+            // Go through selections parents until a container is found
+            if (Editor.selection) {
+            
+                target = Editor.selection;
+                while ( !ElemLib.getData(target).isContainer )
+                    target = target.parentNode;
+                
+            }
+            else if (Target.doc.getElementById('mainContent'))
+				target = Target.doc.getElementById('mainContent');
+			else
+				target = Target.doc.body;
+			
+			var new_elem = $(this).data('element').addTo( target );
+			Editor.setSelection(new_elem);
+        
+            UndoRedo.saveState('Added ' + Editor.selectionData.name);
+		});
+	
+	// Get update check function running
+	Updates.check();
+	
+	$('#target_iframe').load(function() 
+    {	
+		// Set handlers to target elements
+		var $contens = $(this).contents().find("html");
+		
+		$contens.on('click','*',function(e)
+		{
+			e.preventDefault();
+            e.stopPropagation();
+			
+			if (e.ctrlKey) {
+				alert("ctrl was pressed during click");
+			}
+			Editor.setSelection(this);
+		});
+        
+        $contens.on('dblclick','*',function(e)
+		{
+			e.preventDefault();
+            e.stopPropagation();
+            
+            // Open micromanager
+			$('#right_panel_tabs').tabs("option", "active", 1);
+            toggle_right_panel(true);
+		});
+        
+		/*
+		$contens.on('contextmenu','*',function(e)
+		{
+			e.preventDefault();
+            e.stopPropagation();
+			
+			alert(this);
+		});*/
+		
+		Updates.targetSiteChanged = true;
+	});
+});
+
+   
+</script>
+
+</head>
+
+<body>
+
+    <div id="upper_panel">
+	
+		<div id="upper_panel_buttons">
+			
+			<div id="undo_button" class="editor-button disabled" onclick="UndoRedo.undo()">
+				<i class="fa fa-undo" aria-hidden="true"></i>Undo
+			</div>
+			
+			<div id="redo_button" class="editor-button disabled" onclick="UndoRedo.redo()">
+				<i class="fa fa-repeat" aria-hidden="true"></i>Redo
+			</div>
+			
+			<div class="editor-button" onclick=" this.innerHTML += ' ...sry this doesn\'t save at all yet mate'; ">
+				<i class="fa fa-save" aria-hidden="true"></i>Save
+			</div>
+			
+			<div class="editor-button" onclick="window.open(Target.url);">
+				<i class="fa fa-television" aria-hidden="true"></i>Show in full
+			</div>
+			
+		</div>
+	</div>
+	
+    <div id="lower_wrapper">
+
+        <div id="left_panel_toggle_area" class="toggle_area">
+            <i id="left_panel_toggle" class="toggle toggle_closed fa fa-chevron-left" aria-hidden="true"></i>
+            <!--
+            <i id="left_panel_toggle" class="fa fa-chevron-circle-left toggle_closed" aria-hidden="true"></i>-->
+        </div>
+
+        <div id="left_panel">
+            <ul id="left_panel_selections">
+
+                <li onclick="toggle_window('add')"><i class="fa fa-plus-circle" aria-hidden="true"></i>Add</li>
+                <li	onclick="toggle_window('edit_styles')"><i class="fa fa-paint-brush" aria-hidden="true"></i>Edit styles</li>
+                <li onclick="toggle_window('files')"><i class="fa fa-file" aria-hidden="true"></i>Files</li>
+                <li onclick="toggle_window('html')"><i class="fa fa-code" aria-hidden="true"></i>Show HTML</li>
+
+            </ul>
+        </div>
+
+        <div id="add" class="window">
+            <h3>Add...</h3>
+            <ul id="add_list"></ul> <!--Get items in init from ElemLib-->
+        </div>
+
+        <div id="edit_styles" class="window">
+            <h3>Edit styles</h3>
+            <select id="style_editor_select" onchange="StyleEditor.build()">
+                <option value="h1">Header 1</option>
+                <option value="h2">Header 2</option>
+                <option value="h3">Header 3</option>
+                <option value="h4">Header 4</option>
+                <option value="p">Paragraph</option>
+            </select>
+            <div id="style_editor">
+            
+                <div id="style_example"></div>
+                
+                <div style="float: right">
+                    <div class="editor-button" onclick="">
+                        Save
+                    </div>
+
+                    <div class="editor-button" onclick="">
+                        Force on all
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="files" class="window">
+            <h3>Files</h3>
+            <div>tähä juha teet sit juttuutujs</div>
+        </div>
+
+        <div id="html" class="window">
+            <h3>Current HTML</h3>
+            <div id="htmlText">
+                No HTML-document opened! <!--Overwritten in toggle_window()-->
+            </div>
+        </div>
+
+
+        <div id="right_panel_toggle_area" class="toggle_area">
+            <i id="right_panel_toggle" class="toggle toggle_closed fa fa-chevron-right " aria-hidden="true"></i>
+        </div>
+
+        <div id="right_panel">
+            <div id="right_panel_tabs">
+                <ul>
+                    <li><a href="#node_tree">Node tree</a></li>
+                    <li><a href="#micromanager">Micromanager</a></li>
+                </ul>
+
+                <div id="node_tree"></div>
+
+                <div id="micromanager">
+                
+				This ere shall hold all teh editing inputs and whatnot
+				
+				<!--
+                    <h2 id="edwiHead">Edit &lt;?h1&gt;</h2>
+                    
+                    <p id="edwiInfo"><i class="fa fa-question-circle" aria-hidden="true"></i></p>
+                    
+                    <p class="tip">Computed values are shown in grey.</p>
+                    <p class="tip">Leave input empty for default value.</p>
+                    
+                    <div class="tbl">
+                        <div class="tblhead" data-headof="Meta">
+                            <div class="tblcell">Meta</div>
+                            <div class="tblcell" style="text-align: right;">
+                                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                        <div style="" class="tblrowgroup" id="Meta">
+                            <div class="tblrow">
+                                <div class="tblcell">id:</div>
+                                <div class="tblcell">
+                                    <input name="id" data-groupname="Meta" class="prop_input" value="" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tblhead" data-headof="General">
+                            <div class="tblcell">General</div>
+                            <div class="tblcell" style="text-align: right;">
+                                <i class="fa fa-chevron-down" aria-hidden="true"></i></div></div><div style="" class="tblrowgroup" id="General"><div class="tblrow"><div class="tblcell">width:</div><div class="tblcell"><input name="width" data-groupname="General" class="prop_input" placeholder="700px" value="" type="text"></div></div><div class="tblrow"><div class="tblcell">height:</div><div class="tblcell"><input name="height" data-groupname="General" class="prop_input" placeholder="48px" value="" type="text"></div></div><div class="tblrow"><div class="tblcell">visibility:</div><div class="tblcell"><select name="visibility" data-groupname="General" class="prop_input"><option style="color: rgb(119, 119, 119);" value="visible">visible</option><option value="hidden">hidden</option><option value="collapse">collapse</option><option value="inherit">inherit</option></select></div></div><div class="tblrow"><div class="tblcell">color:</div><div class="tblcell"><input name="color" data-groupname="General" class="prop_input" placeholder="rgb(0, 0, 0)" value="" type="text"></div></div><div class="tblrow"><div class="tblcell">backgroundColor:</div><div class="tblcell"><input name="backgroundColor" data-groupname="General" class="prop_input" placeholder="transparent" value="" type="text"></div></div></div><div class="tblhead" data-headof="Position"><div class="tblcell">Position</div><div class="tblcell" style="text-align: right;"><i class="fa fa-chevron-down" aria-hidden="true"></i></div></div><div style="" class="tblrowgroup" id="Position"><div class="tblrow"><div class="tblcell">position:</div><div class="tblcell"><select name="position" data-groupname="Position" class="prop_input"><option style="color: rgb(119, 119, 119);" value="static">static</option><option value="relative">relative</option><option value="absolute">absolute</option><option value="fixed">fixed</option></select></div></div><div class="tblrow"><div class="tblcell">top:</div><div class="tblcell"><input name="top" data-groupname="Position" class="prop_input" placeholder="auto" value="" type="text"></div></div><div class="tblrow"><div class="tblcell">right:</div><div class="tblcell"><input name="right" data-groupname="Position" class="prop_input" placeholder="auto" value="" type="text"></div></div><div class="tblrow"><div class="tblcell">bottom:</div><div class="tblcell"><input name="bottom" data-groupname="Position" class="prop_input" placeholder="5px" value="" type="text"></div></div><div class="tblrow"><div class="tblcell">left:</div><div class="tblcell"><input name="left" data-groupname="Position" class="prop_input" placeholder="auto" value="" type="text"></div></div></div><div class="tblhead" data-headof="Text"><div class="tblcell">Text</div><div class="tblcell" style="text-align: right;"><i class="fa fa-chevron-down" aria-hidden="true"></i></div></div><div style="" class="tblrowgroup" id="Text"><div class="tblrow"><div class="tblcell">textContent:</div><div class="tblcell"><input name="textContent" data-groupname="Text" class="prop_input" value="Pertti" type="text"></div></div></div></div><div id="gridOnOff" class="divButton"><i class="fa fa-th" aria-hidden="true"></i> Snap to grid</div><div class="divButton"><i class="fa fa-trash" aria-hidden="true"></i> Delete</div>
+                -->
+                </div>
+            </div>
+
+        </div>
+	
+        <iframe id="target_iframe" src="templates/template1.html"></iframe>
+        
+        <div id="quick_editor">
+            
+            <div class="editor-button" title="Max width" onclick="QuickEditor.width()">
+				<i class="fa fa-arrows-h" aria-hidden="true"></i>
+			</div>
+            
+            <div class="editor-button" title="Max heigth" onclick="QuickEditor.height()">
+				<i class="fa fa-arrows-v" aria-hidden="true"></i>
+			</div>
+            
+        </div>
+        
+    </div>
+
+</body>
+</html>
