@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Template Portfolio page</title>
+
+<link rel="stylesheet" type="text/css" href="reset.css">
+<link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.1/themes/base/jquery-ui.css"/>
+
+<style>
+
+.bfol_absolutelyPositioned {
+    position: absolute;
+}
+    
+ul {
+    list-style-type: circle;
+}
+    
+li { margin-left: 20px; }
+
+
+* {
+	box-sizing: border-box;
+    overflow: visible;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+    background-color: #333;
+}
+    
+#wrapper div {
+    padding: 5px;
+}
+    
+#wrapper {
+	/*min-height:100%;*/
+	position:relative;
+	background-color: #669;
+}
+    
+#mainContent {
+    padding-top: 75px;
+    padding-bottom: 35px; /* height of #footerArea */
+    position: relative;
+    background-color: #cfc;
+    border-left: dotted green 10px;
+    border-right: dotted green 10px;
+}
+    
+h1 {
+    font-size: 3em;
+    color: red;
+}
+    
+h3 {
+    font-size: 3em;
+    color: rgb(0,255,200);
+}
+    
+#headerArea {
+	position: absolute;
+    background-color: #359;
+    width: 100%;
+    height: 75px;
+    border-bottom: #acf solid 3px;
+}
+    
+#footerArea {
+    background-color: #359;
+    width: 100%;
+    height: 35px;
+    border-top: #acf solid 3px;
+    position: absolute;
+    bottom: 0px;
+}
+    
+#headerContent, #footerContent, #mainContent {
+    height: 100%;
+    width: 700px;
+    margin: 0 auto;
+}
+    
+#headerContent > * {
+    position: relative;
+    bottom: 5px;
+    padding-bottom: 0px;
+}
+    
+</style>
+
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery-ui.min.js"></script>
+
+<script type="text/javascript" src="jquery.gridster_SANSRESIZEDIM.js"></script>
+	
+
+
+</head>
+
+<body>
+
+<div id="wrapper" class="editor_locked" style="width:100%; height:100%">
+    
+<div id="headerArea" class="bfol_unmovable" data-bfol_type="headerArea">
+    <div id="headerContent" class="bfol_unselectable bfol_grid">
+        <h1>Pertti</h1>
+        <h3>Olen tietokoneäijä</h3>
+    </div>
+</div>
+    
+<div id="mainContent" class="bfol_grid bfol_unmovable">
+
+    <div style="background-color:yellow;">
+    <h3>Minusta lyhyesti</h3>
+        <p>
+            On tullu täs kelattuu et välil hommat menee hyvin,
+            välil huonosti mut ei sille voi mitää ku sillee se 
+            vaan menee eikä pidä vaipua horrokseen sen takia että
+            aakkoset on vaikee opetella ulkoo tai siis sillee et 
+            jos joku kysyy sult et "mones kirjain 't' on?" nii 
+            ei sitä joku lääkärikää osaa varmaa sanoo iha tost vaa 
+            ku sellai nippelitieto on vaan aika turhaa paitsi jos on 
+            töissä kirjastossa missä pitää lajitella kirjoja.
+
+        </p>
+    </div>
+    
+</div>
+
+<div id="footerArea" class="bfol_unmovable" data-bfol_type="footerArea">
+    <div id="footerContent" class="bfol_unselectable bfol_grid">
+        <p>Moi äiti</p>
+    </div>
+</div>
+    
+</div>    
+
+</body></html>
